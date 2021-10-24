@@ -4,12 +4,12 @@ CREATE DATABASE whac_employees_db;
 USE whac_employees_db;
 
 CREATE TABLE departments (
-    id INT INTENTITY(1, 1) PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     department_name VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE roles (
-    id INT INDENTITY(101, 1) PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(30) NOT NULL,
     wage INT NOT NULL,
     department_id INT,
@@ -19,7 +19,7 @@ CREATE TABLE roles (
 );
 
 CREATE TABLE employees (
-    id INT INDENTITY(201, 1) PRIMARY KEY,
+    id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     roles_id INT,

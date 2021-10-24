@@ -1,16 +1,6 @@
-const express = require('express');
 const inquirer = require('inquirer')
 const mysql2 = require('mysql2');
 const consoleTable = require('console.table');
-
-
-const PORT = process.env.PORT || 3001;
-
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 // Connect to database
 const db = mysql2.createConnection( {
@@ -23,4 +13,9 @@ const db = mysql2.createConnection( {
   },
   console.log(`Connected to the whac_employees_db database.`)
 );
+
+db.query('SELECT * FROM employees', function (err, results) {
+  console.log(results);
+  console.table(results);
+});
 
