@@ -4,21 +4,14 @@ const consoleTable = require('console.table');
 
 // Connect to database
 const db = mysql2.createConnection( {
-    host: 'localhost',
-    // MySQL username,
+    host: 'localhost', 
+    port: '3306' 
     user: 'root',
-    // MySQL password
     password: 'pass1234',
     database: 'whac_employees_db'
   },
   console.log(`Connected to the whac_employees_db database.`)
 );
-
-//checking connection
-db.query('SELECT * FROM employees', function (err, results) {
-  console.log(results);
-  console.table(results);
-});
 
 // Converting HW 10 for this
 
@@ -26,15 +19,27 @@ function init() {
   inquirer.prompt(initialPrompt).then((data) => {
  
     if(data.initialOptions==='View all departments') {
-      console.table(departments);
+      console.table(totalDepartments);
     }
     if(data.initialOptions==='View all roles') {
-      console.table(roles);
+      console.table(totalRoles);
     }
- //    console.log(teamMembers);
     if(data.initialOptions==='View all employees') {
-     // const employees = new Intern(data.name, data.id, data.email, data.college)
-      console.table(employees);
+      console.table(totalEmployees);
+    }
+    if(data.initialOptions==='Add a department') {
+      addDepartment ()
+      console.log('Department added')
+    }
+
+    if(data.initialOptions==='Add a role') {
+      addRole()
+      console.log('Role added')
+    }
+
+    if(data.initialOptions==='Add an employee') {
+      addEmployee()
+      console.log('Employee added')
     }
 
     Const initialPrompt = [
@@ -50,11 +55,20 @@ function init() {
           'Add a role',
           'Add an employee',
           'Update an employee'
+          'Quit'
         ],
       },
     ];
 
 
+    const totalDepartments = db.query('SELECT * FROM departments')
+
+
+    const totalRoles
+    const totalEmployees
+    const addDepartment
+    const addRole
+    const addEmployee
 
 
 
