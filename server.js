@@ -5,7 +5,7 @@ const consoleTable = require('console.table');
 // Connect to database
 const db = mysql2.createConnection( {
     host: 'localhost', 
-    port: '3306' 
+    port: '3306',
     user: 'root',
     password: 'pass1234',
     database: 'whac_employees_db'
@@ -13,20 +13,29 @@ const db = mysql2.createConnection( {
   console.log(`Connected to the whac_employees_db database.`)
 );
 
-// Converting HW 10 for this
+
 
 function init() {
   inquirer.prompt(initialPrompt).then((data) => {
  
     if(data.initialOptions==='View all departments') {
-      console.table(totalDepartments);
-    }
+      db.query('SELECT * FROM departments', function (err, results) {
+        console.table(results);
+        init ();
+    })};
+
     if(data.initialOptions==='View all roles') {
-      console.table(totalRoles);
-    }
+      db.query("SELECT roles.id, roles.title, roles.wage, departments.department_name FROM roles INNER JOIN departments ON roles.department_id = departments.id;", function (err, results) {
+        console.table(results);
+        init ();
+    })};
+
     if(data.initialOptions==='View all employees') {
-      console.table(totalEmployees);
-    }
+      db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.wage, departments.department_name FROM employees INNER JOIN roles ON employees.roles_id = roles.id;", function (err, results) {
+        console.table(results);
+        init ();
+    })};
+    
     if(data.initialOptions==='Add a department') {
       addDepartment ()
       console.log('Department added')
@@ -42,7 +51,14 @@ function init() {
       console.log('Employee added')
     }
 
-    Const initialPrompt = [
+    if(data.initialOptions==='Quit') {
+      process.exit(0);
+    }
+
+  });
+};
+
+    const initialPrompt = [
       {
         type: "list",
         name: "initialOptions",
@@ -54,23 +70,17 @@ function init() {
           'Add a department',
           'Add a role',
           'Add an employee',
-          'Update an employee'
+          'Update an employee', 
           'Quit'
         ],
       },
     ];
 
+addDepartment = 
 
-    const totalDepartments = db.query('SELECT * FROM departments')
+addRole = 
 
-
-    const totalRoles
-    const totalEmployees
-    const addDepartment
-    const addRole
-    const addEmployee
+addCustomer= 
 
 
-
-
-init ();
+init ()
