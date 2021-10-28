@@ -1,0 +1,7 @@
+{
+    "window.title": "${activeEditorShort}${separator}${rootName} ${separator} [Branch: main]",
+    "cSpell.words": [
+        "frontdesk",
+        "whac"
+    ]
+}

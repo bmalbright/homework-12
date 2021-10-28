@@ -14,6 +14,7 @@ const db = mysql2.createConnection(
   console.log(`Connected to the whac_employees_db database.`)
 );
 
+// defines the init function and determines the response to the questions
 function init() {
   inquirer.prompt(initialPrompt).then((data) => {
     if (data.initialOptions === "View all departments") {
@@ -45,28 +46,42 @@ function init() {
 
     if (data.initialOptions === "Add an department") {
       inquirer.prompt(departPrompt).then((data) => {
-      console.log("Department added!");
+      db.query(
+        INSERT INTO departments (department_name)
+        VALUES (data.name);
+        console.log("Department added!"));
+      consoleTable(departments);
       init();
-    })}
+    });
+    };
 
     if (data.initialOptions === "Add an role") {
       inquirer.prompt(rolePrompt).then((data) => {
+        db.query(
+          INSERT INTO roles (title, wage)
+          VALUES (data.title, data.wage));
       console.log("Role added!");
       init()
-    })}
+      });
+    };
 
     if (data.initialOptions === "Add an employee") {
       inquirer.prompt(employeePrompt).then((data) => {
+        db.query(
+          INSERT INTO employees (first_name, last_name, roles_id)
+          VALUES (data.first_name, data,last_name, data.role));
       console.log("Employee added!");
       init()
-    })}
+    })};
 
     if (data.initialOptions === "Quit") {
       process.exit(0);
-    }
+    };
   });
-}
+};
 
+
+//prompt questions to the user up initiation
 const initialPrompt = [
   {
     type: "list",
@@ -85,36 +100,41 @@ const initialPrompt = [
   },
 ];
 
-const departPrompt = {
+
+// prompt question for adding a department
+let departPrompt = [ 
+  { 
   type: "input",
   name: "name",
   message: "What is the name of the department?",
-  validate: (answer) => {
-    if (answer !== "") {
+  validate: (data) => {
+    if (data !== "") {
       return true;
     }
   },
-  console.log(answer)
-};
 
-const rolePrompt = [
+  }];
+
+
+// prompt questions to add a role
+let rolePrompt = [
   {
     type: "input",
-    name: "name",
+    name: "title",
     message: "What is the role?",
-    validate: (answer) => {
-      if (answer !== "") {
+    validate: (data) => {
+      if (data !== "") {
         return true;
       }
       return "Please enter a name with at least one valid letter.";
-    },
+    }
   },
   {
     type: "input",
     name: "wage",
     message: "What is the hourly wage for this position?",
-    validate: (answer) => {
-      if (answer !== num) {
+    validate: (data) => {
+      if (data !== num) {
         return true;
       }
       return "Please enter a valid number.";
@@ -128,13 +148,14 @@ const rolePrompt = [
   }
 ];
 
-const employeePrompt = [
+// prompt questions for adding an employee
+let employeePrompt = [
   {
     type: "input",
     name: "first_name",
     message: "What is the employee's first name?",
-    validate: (answer) => {
-      if (answer !== "") {
+    validate: (data) => {
+      if (data !== "") {
         return true;
       }
       return "Please enter a name with at least one valid letter.";
@@ -144,8 +165,8 @@ const employeePrompt = [
     type: "input",
     name: "last_name",
     message: "What is the employee's last name?",
-    validate: (answer) => {
-      if (answer !== "") {
+    validate: (data) => {
+      if (data !== "") {
         return true;
       }
       return "Please enter a name with at least one valid letter.";
@@ -162,5 +183,5 @@ const employeePrompt = [
 
 
 
-
+// function that activates the prompt questions to the user.
 init();
