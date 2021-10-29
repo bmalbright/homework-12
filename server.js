@@ -46,31 +46,25 @@ function init() {
 
     if (data.initialOptions === "Add an department") {
       inquirer.prompt(departPrompt).then((data) => {
-      db.query(
-        INSERT INTO departments (department_name)
-        VALUES (data.name);
-        console.log("Department added!"));
-      consoleTable(departments);
+      db.query("INSERT INTO departments (department_name) VALUES (data.name)");
+        console.log("Department added!");
+      consoleTable(data);
       init();
     });
     };
 
     if (data.initialOptions === "Add an role") {
       inquirer.prompt(rolePrompt).then((data) => {
-        db.query(
-          INSERT INTO roles (title, wage)
-          VALUES (data.title, data.wage));
-      console.log("Role added!");
+        db.query("INSERT INTO roles (title, wage) VALUES (data.title, data.wage)");
+      console.log(data);
       init()
       });
     };
 
     if (data.initialOptions === "Add an employee") {
       inquirer.prompt(employeePrompt).then((data) => {
-        db.query(
-          INSERT INTO employees (first_name, last_name, roles_id)
-          VALUES (data.first_name, data,last_name, data.role));
-      console.log("Employee added!");
+        db.query("INSERT INTO employees (first_name, last_name, roles_) VALUES (data.first_name, data,last_name, data.role)");
+      console.log(data);
       init()
     })};
 
@@ -179,6 +173,7 @@ let employeePrompt = [
     choices: ["operations manager", "lifeguard", "maintenance", "frontdesk", "coach", "instructor", "program manager"]
     }
 ];
+
 
 
 
