@@ -18,7 +18,7 @@ const db = mysql2.createConnection(
 function init() {
   inquirer.prompt(initialPrompt).then((data) => {
     if (data.initialOptions === "View all departments") {
-      db.query("SELECT * FROM departments", function (err, results) {
+      db.query(`SELECT * FROM departments`, function (err, results) {
         console.table(results);
         init();
       });
@@ -26,7 +26,8 @@ function init() {
 
     if (data.initialOptions === "View all roles") {
       db.query(
-        "SELECT roles.id, roles.title, roles.wage, departments.department_name FROM roles INNER JOIN departments ON roles.department_id = departments.id;",
+        `SELECT roles.id, roles.title, roles.wage, departments.department_name 
+        FROM roles LEFT JOIN departments ON roles.department_id = departments.id;`,
         function (err, results) {
           console.table(results);
           init();
@@ -36,7 +37,11 @@ function init() {
 
     if (data.initialOptions === "View all employees") {
       db.query(
-        "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.wage, departments.department_name, employees.manager_id FROM employees INNER JOIN roles ON employees.roles_id = roles.id INNER JOIN departments WHERE departments.id = roles.department_id;",
+        `SELECT e.id, e.first_name, e.last_name, r.title, r.wage, d.department_name, m.last_name AS mgr_last
+        FROM employees e
+        LEFT JOIN roles r ON e.roles_id = r.id 
+        LEFT JOIN departments d ON d.id = r.department_id;
+        LEFT JOIN employees m ON e.manager_id = m.id`,
         function (err, results) {
           console.table(results);
           init();
@@ -44,18 +49,21 @@ function init() {
       );
     }
 
-    if (data.initialOptions === "Add an department") {
+    if (data.initialOptions === "Add a department") {
       inquirer.prompt(departPrompt).then((data) => {
-      db.query("INSERT INTO departments (department_name) VALUES (data.name)");
-        console.log("Department added!");
-      consoleTable(data);
+      db.query(`INSERT INTO departments (department_name) VALUES (\'${data.name}\')`);
+        console.table(data);
       init();
     });
     };
 
-    if (data.initialOptions === "Add an role") {
+    if (data.initialOptions === "Add a role") {
       inquirer.prompt(rolePrompt).then((data) => {
-        db.query("INSERT INTO roles (title, wage) VALUES (data.title, data.wage)");
+        db.query(`
+        INSERT INTO roles (title, wage, department_id) 
+        SELECT \'${data.title}\', ${data.wage}, id
+        FROM departments
+        WHERE department_name = \'${data.department}\'`);
       console.log(data);
       init()
       });
@@ -63,7 +71,11 @@ function init() {
 
     if (data.initialOptions === "Add an employee") {
       inquirer.prompt(employeePrompt).then((data) => {
-        db.query("INSERT INTO employees (first_name, last_name, roles_) VALUES (data.first_name, data,last_name, data.role)");
+        db.query(`
+        INSERT INTO employees (first_name, last_name, roles_id) 
+        SELECT \'${data.first_name}\', \'${data.last_name}\', id
+        FROM roles 
+        WHERE title = \'${data.title}\'`);
       console.log(data);
       init()
     })};
@@ -101,13 +113,8 @@ let departPrompt = [
   type: "input",
   name: "name",
   message: "What is the name of the department?",
-  validate: (data) => {
-    if (data !== "") {
-      return true;
-    }
   },
-
-  }];
+  ];
 
 
 // prompt questions to add a role
@@ -116,23 +123,11 @@ let rolePrompt = [
     type: "input",
     name: "title",
     message: "What is the role?",
-    validate: (data) => {
-      if (data !== "") {
-        return true;
-      }
-      return "Please enter a name with at least one valid letter.";
-    }
   },
   {
     type: "input",
     name: "wage",
     message: "What is the hourly wage for this position?",
-    validate: (data) => {
-      if (data !== num) {
-        return true;
-      }
-      return "Please enter a valid number.";
-    },
   },
   {
   type: "list",
@@ -148,27 +143,15 @@ let employeePrompt = [
     type: "input",
     name: "first_name",
     message: "What is the employee's first name?",
-    validate: (data) => {
-      if (data !== "") {
-        return true;
-      }
-      return "Please enter a name with at least one valid letter.";
-    },
   },
   {
     type: "input",
     name: "last_name",
     message: "What is the employee's last name?",
-    validate: (data) => {
-      if (data !== "") {
-        return true;
-      }
-      return "Please enter a name with at least one valid letter.";
-    },
   },
   {
     type: "list",
-    name: "role",
+    name: "title",
     message: "What position is this employee filling?",
     choices: ["operations manager", "lifeguard", "maintenance", "frontdesk", "coach", "instructor", "program manager"]
     }
