@@ -26,11 +26,11 @@ INSERT INTO employees (first_name, last_name, roles_id)
 
 UPDATE employees
 SET manager_id = 1
-WHERE roles_id IN (2, 3, 4);
+WHERE roles_id IN (2,3,4);
 
 
 UPDATE employees
-SET manager_id = 7
+SET manager_id = 5
 WHERE roles_id IN (5, 6);
 
 

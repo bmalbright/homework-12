@@ -27,7 +27,8 @@ function init() {
     if (data.initialOptions === "View all roles") {
       db.query(
         `SELECT roles.id, roles.title, roles.wage, departments.department_name 
-        FROM roles LEFT JOIN departments ON roles.department_id = departments.id;`,
+        FROM roles 
+        LEFT JOIN departments ON roles.department_id = departments.id;`,
         function (err, results) {
           console.table(results);
           init();
@@ -40,7 +41,7 @@ function init() {
         `SELECT e.id, e.first_name, e.last_name, r.title, r.wage, d.department_name, m.last_name AS mgr_last
         FROM employees e
         LEFT JOIN roles r ON e.roles_id = r.id 
-        LEFT JOIN departments d ON d.id = r.department_id;
+        LEFT JOIN departments d ON d.id = r.department_id
         LEFT JOIN employees m ON e.manager_id = m.id`,
         function (err, results) {
           console.table(results);
@@ -75,6 +76,17 @@ function init() {
         INSERT INTO employees (first_name, last_name, roles_id) 
         SELECT \'${data.first_name}\', \'${data.last_name}\', id
         FROM roles 
+        WHERE title = \'${data.title}\'`);
+      console.log(data);
+      init()
+    })};
+
+    if (data.initialOptions === "Update an employee") {
+      inquirer.prompt(employeeUpdatePrompt).then((data) => {
+        db.query(`
+        UPDATE employees
+        WHEN \'${data.first_name && data.last_name}\' === \'${employees.first_name && employees.last_name}\';
+        SET roles_id
         WHERE title = \'${data.title}\'`);
       console.log(data);
       init()
@@ -157,7 +169,24 @@ let employeePrompt = [
     }
 ];
 
-
+let employeeUpdatePrompt = [
+  {
+    type: "input",
+    name: "first_name",
+    message: "What is the employee's first name?",
+  },
+  {
+    type: "input",
+    name: "last_name",
+    message: "What is the employee's last name?",
+  },
+  {
+    type: "list",
+    name: "title",
+    message: "Choose a new position for this employee?",
+    choices: ["operations manager", "lifeguard", "maintenance", "frontdesk", "coach", "instructor", "program manager"]
+    }
+];
 
 
 
